@@ -30,21 +30,31 @@ class formacion
 		method agregarVagonALaFormacion(nuevoVagon)  { vagonesDeLaFormacion.add(nuevoVagon)}
 		method maximoDePasajerosDeLaFormacion() = vagonesDeLaFormacion.sum({vagon => vagon.cantidaMaximaDePasajeros()})
 		method cantidadDeVagonesPopulares() =  vagonesDeLaFormacion.count({ vagon =>vagon.esPopular()})
-		/*Ver */
+		/*Arreglar pasando a otro  methodo */
 		method esFormacionCarguera () =    {vagonesDeLaFormacion.all({vagon => vagon.cargaMaxima() >= 1000})}
-		
-		method dispersionDePeso () = {  vagonesDeLaFormacion.max({vagon => vagon.pesoMaximo()})- vagonesDeLaFormacion.min({vagon => vagon.pesoMaximo()})}
+		method dispersionDePeso ()  {  
+			
+			const maximo = vagonesDeLaFormacion.max({vagon => vagon.pesoMaximo()})
+			const minimo =  vagonesDeLaFormacion.min({vagon => vagon.pesoMaximo()})
+			return maximo.pesoMaximo() - minimo.PesoMaximo()
+		}
 		
 		method cantidadDeBanio() = 	vagonesDeLaFormacion.count({vagon => vagon.tieneBanio()})
 		
 		method estaEquilibtado () {
-			  const diferenciaEntreVagones  = vagonesDeLaFormacion.max({vagon => vagon.cantidaMaximaDePasajeros()})- vagonesDeLaFormacion.min({vagon => vagon.cantidaMaximaDePasajeros()})
-			  return diferenciaEntreVagones < 20
+			  const maximo  = vagonesDeLaFormacion.max({vagon => vagon.cantidaMaximaDePasajeros()})
+			  const minimo  vagonesDeLaFormacion.min({vagon => vagon.cantidaMaximaDePasajeros()})
+			  return  (maximo - minimo) < 20
+			  }
+			  
+		method realizarMantenimiento () {
+			 const diferenciaEntreVagones  = vagonesDeLaFormacion.max({vagon => vagon.cantidaMaximaDePasajeros()})- vagonesDeLaFormacion.min({vagon => vagon.cantidaMaximaDePasajeros()})
+			return diferenciaEntreVagones < 20
 			  }
 
   method estaOrdenado ()
    { 
-   	return not (1..vagonesDeLaFormacion.size()-1).any({i => vagonesDeLaFormacion.get(i).cantidadDeasajerosMaxima() > 0 and vagonesDeLaFormacion.get(i-1).cantidadDeasajerosMaxima() == 0}) 
+   	return not (1..vagonesDeLaFormacion.size()-1).any({i => vagonesDeLaFormacion.get(i).cantidadDeasajerosMaxima() > 0 and not vagonesDeLaFormacion.get(i-1).cantidadDeasajerosMaxima() == 0}) 
    	
    }
 	}
