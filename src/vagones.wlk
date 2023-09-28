@@ -21,7 +21,7 @@ La cantidad máxima de _carga_ que puede llevar un vagón de pasajeros depende d
 El _peso máximo_ de un vagón de pasajeros se calcula así: 2000 kilos, más 80 kilos por cada pasajero, más el máximo de carga que puede llevar.
  
  */
-class vagonesDePasajeros 
+class VagonesDePasajeros 
 	{
 		const property largo
 		const property ancho
@@ -44,7 +44,7 @@ class vagonesDePasajeros
 		}
 		method cargaMaxima () 
 		{
-			return if(tieneBanio){ 300} else  {return 800 }
+			return if (tieneBanio){ 300} else  { 800 }
 		}
 		method pesoMaximo () 
 			{
@@ -75,20 +75,20 @@ Su _peso máximo_ se calcula así: 4000 kilos, más 80 kilos por cada pasajero, 
 	 * 
 	 */
 	
-class vagonDeDormitorio
+class VagonDeDormitorio
 	{
 		const property tieneBanio = true
 		const property cantidadDeCompartimientos
 		var property cantidadDeDormitoriosPorCormpartimentos
 		
-		method cantidaMaximaDePasajeros () = return cantidadDeCompartimientos * cantidadDeDormitoriosPorCormpartimentos
+		method cantidaMaximaDePasajeros() =  cantidadDeCompartimientos * cantidadDeDormitoriosPorCormpartimentos
 		
-		method cargaMaxima () = {return 1200}
-		method pesoMaximo () =
+		method cargaMaxima () =  1200
+		method pesoMaximo () 
 			{
 				return 4000 + self.cargaMaxima() + (self.cantidaMaximaDePasajeros()*80)
 			}
-		method esPopular () = 
+		method esPopular ()  
 			{
 				return self.cantidaMaximaDePasajeros() > 50
 			}
@@ -111,24 +111,21 @@ Su _peso máximo_ es de 1500 kilos más el máximo de carga que puede llevar.
 */
 	
 	
-class vagonDeCarga 
+class VagonDeCarga 
 	{
-		const property cargaMaximaIdeal
-		var property cantidaDeMaderas
+		const property cargaMaximaIdeal = 0
+		var property cantidaDeMaderas = 0
 		const  property tieneBanio = false
 		
-		method cantidaDePasajerosMaxima() = return 0
+		method cantidaDePasajerosMaxima() =  0
 		
-		method cargaMaxima () = {
+		method cargaMaxima ()  {
 			return 0.max(cargaMaximaIdeal - cantidaDeMaderas*400 )
 			
 		}
 		
-		method pesoMaximo () =
-			{
-				return 1500 + self.cargaMaxima() 
-			}
-		method esPopular () = 
+		method pesoMaximo () = 1500 + self.cargaMaxima() 
+		method esPopular () 
 		{
 			return false
 		}

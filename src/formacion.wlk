@@ -1,4 +1,5 @@
 import vagones.*
+import locomotoras.*
 /*Requerimientos - información sobre una formación
 
 A partir del modelo que se construya se tiene que poder saber fácilmente, para una formación:
@@ -24,19 +25,58 @@ Poder pedirle a una formación lo siguiente:
     
 */
 
-class formacion 
+
+	/*## Etapa 2 - locomotoras
+
+Agregar al modelo las **locomotoras**. 
+*De cada locomotora debe indicarse: su peso, hasta cuánto peso puede arrastar, y su velocidad máxima. 
+*Decimos que una locomotora es _eficiente_ si puede arrastrar, al menos, cinco veces su peso. 
+*P.ej. una locomotora que pesa 1000 kilos y puede arrastar hasta 7000 es eficiente; si puede arrastrar hasta 3000 entonces no es eficiente.
+
+Ahora una formación incluye locomotoras (pueden ser varias), además de vagones. 
+
+Con el modelo ampliado, tiene que poder obtenerse fácilmente, para una formación:
+- su _velocidad máxima_ , que es el mínimo entre las velocidades máximas de las locomotoras.
+- Si es _eficiente_; o sea, si todas sus locomotoras lo son.
+- Si _puede moverse_. 
+  Una formación puede moverse si la suma del arrastre de cada una de sus locomotoras, es mayor o igual al _peso máximo_ de la formación, que es: peso de las locomotoras + peso máximo de los vagones.
+- Cuántos _kilos de empuje le faltan_ para poder moverse, que es: 0 si ya se puede mover, y si no, el resultado de: peso máximo - suma de arrastre de cada locomotora.
+
+P.ej. si una formación tiene una locomotora que pesa 1000 kilos y arrastra hasta 30000, y cuatro vagones, de 6000 kilos de peso máximo cada uno, entonces sí puede moverse, porque su peso máximo es 25000.  
+Si agregamos dos vagones más de 6000 kilos, llevamos el peso máximo a 37000. Ahora la formación no puede moverse y le faltan 7000 kilos de empuje.
+	 * 
+	 * 
+	 * 
+	 */
+	
+
+class Formacion 
 	{
 		const vagonesDeLaFormacion = []
-		method agregarVagonALaFormacion(nuevoVagon)  { vagonesDeLaFormacion.add(nuevoVagon)}
-		method maximoDePasajerosDeLaFormacion() = vagonesDeLaFormacion.sum({vagon => vagon.cantidaMaximaDePasajeros()})
-		method cantidadDeVagonesPopulares() =  vagonesDeLaFormacion.count({ vagon =>vagon.esPopular()})
+		const locomotoras =  []
+			method agregarVagonALaFormacion(nuevoVagon) 
+				 { 
+				 	vagonesDeLaFormacion.add(nuevoVagon)
+				 }
+				 
+		method maximoDePasajerosDeLaFormacion()  {
+			return vagonesDeLaFormacion.sum({vagon => vagon.cantidaMaximaDePasajeros()})
+			
+			}
+		
+		
+		method cantidadDeVagonesPopulares() { 
+			 
+			return vagonesDeLaFormacion.count({vagon =>vagon.esPopular()})
+		}
+		
 		/*Arreglar pasando a otro  methodo */
-		method esFormacionCarguera () =    {vagonesDeLaFormacion.all({vagon => vagon.cargaMaxima() >= 1000})}
+		method esFormacionCarguera () =  vagonesDeLaFormacion.all({vagon => vagon.cargaMaxima() >= 1000})
 		method dispersionDePeso ()  {  
 			
 			const maximo = vagonesDeLaFormacion.max({vagon => vagon.pesoMaximo()})
 			const minimo =  vagonesDeLaFormacion.min({vagon => vagon.pesoMaximo()})
-			return maximo.pesoMaximo() - minimo.PesoMaximo()
+			return maximo.pesoMaximo() - minimo.pesoMaximo()
 		}
 		
 		method cantidadDeBanio() = 	vagonesDeLaFormacion.count({vagon => vagon.tieneBanio()})
@@ -44,17 +84,43 @@ class formacion
 		method estaEquilibtado () {
 			  const maximo  = vagonesDeLaFormacion.max({vagon => vagon.cantidaMaximaDePasajeros()})
 			  const minimo  vagonesDeLaFormacion.min({vagon => vagon.cantidaMaximaDePasajeros()})
-			  return  (maximo - minimo) < 20
+			  return  (maximo.cantidaMaximaDePasajeros() - minimo.cantidaMaximaDePasajeros()) < 20
 			  }
 			  
 		method realizarMantenimiento () {
-			 const diferenciaEntreVagones  = vagonesDeLaFormacion.max({vagon => vagon.cantidaMaximaDePasajeros()})- vagonesDeLaFormacion.min({vagon => vagon.cantidaMaximaDePasajeros()})
+			 const diferenciaEntreVagones  = vagonesDeLaFormacion.max({vagon => vagon.cantidaMaximaDePasajeros()}).cantidaMaximaDePasajeros() - vagonesDeLaFormacion.min({vagon => vagon.cantidaMaximaDePasajeros()}).cantidaMaximaDePasajeros()
 			return diferenciaEntreVagones < 20
 			  }
 
   method estaOrdenado ()
    { 
-   	return not (1..vagonesDeLaFormacion.size()-1).any({i => vagonesDeLaFormacion.get(i).cantidadDeasajerosMaxima() > 0 and not vagonesDeLaFormacion.get(i-1).cantidadDeasajerosMaxima() == 0}) 
+   	return not (1..vagonesDeLaFormacion.size()-1).any({
+   		i => vagonesDeLaFormacion.get(i).cantidaMaximaDePasajeros() > 0 and 
+   		not (vagonesDeLaFormacion.get(i-1).cantidaMaximaDePasajeros() == 0)
+   	}) 
    	
    }
+    method velocidadMaxima()
+    	{
+    		const laLocomotoraConLaMenorVelocidad =  locomotoras.min({l => l.velocidadMaxima()})
+    		return laLocomotoraConLaMenorVelocidad.velocidadMaxima()
+    	}
+    method esEficiente () = locomotoras.all({l => l.esEficiente()})
+    
+    method pesoDeLocomotoras () = locomotoras.sum({l=>l.peso()})
+    
+     method pesoDeVagones () = vagonesDeLaFormacion.sum({v=>v.pesoMaximo()})
+     method sumaDePesos () =  self.pesoDeVagones() + self.pesoDeLocomotoras()
+     
+        method sumaDelArrastre () = locomotoras.sum({l => l.peso()})
+     method  puedeMoverse() = self.sumaDelArrastre () >= self.sumaDePesos()
+     
+     
 	}
+	
+	
+	
+
+	
+	
+	
